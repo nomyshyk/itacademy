@@ -1,0 +1,38 @@
+--Добавить и заполнить таблицу «Посетители» (ФИО, Дата Рождения, Пол)
+create table test.visitors
+(
+id integer primary key,
+FIO varchar(100) not null,
+date_of_birth date not null,
+gender boolean not null
+);
+
+insert into test.visitors(id, FIO, date_of_birth, gender) values(1, 'Masha', '12.12.1999', True);
+insert into test.visitors(id, FIO, date_of_birth, gender) values(2, 'Sasha', '17.02.2000', False);
+insert into test.visitors(id, FIO, date_of_birth, gender) values(3, 'Tanya', '08.05.2001', True);
+
+--Добавить и заполнить таблицу «Посещения» (Посетитель, Время посещения, Тренер)
+create table test.visit
+(
+id integer primary key,
+visitor integer references test.visitors(id) not null,
+time_of_visit timestamp not null,
+trainer integer references test.trainers(id_trainer) not null
+);
+
+insert into test.trainers(id_trainer,name, sport_id, inn, phone ) values (1, 'Bruce Lee', 1, '76567567', '9012321');
+insert into test.trainers(id_trainer,name, sport_id, inn, phone ) values (2, 'Jackie Chan', 2, '34543', '9012321');
+insert into test.trainers(id_trainer,name, sport_id, inn, phone ) values (3, 'Steve Seagul', 2, '3454', '9012321');
+insert into test.trainers(id_trainer,name, sport_id, inn, phone ) values (7, 'Nicolay', 5, '9876', '9012321');
+
+insert into test.visit(id,visitor,time_of_visit,trainer) values(4,1, '2009-06-04 19:25:21',7);
+insert into test.visit(id,visitor,time_of_visit,trainer) values(5,2, '2008-06-04 19:25:21',7);
+insert into test.visit(id,visitor,time_of_visit,trainer) values(6,3, '2007-06-04 19:25:21',3);
+
+--Сделать выборку по посещениям (посетитель, тренер, время) которые пришли на плавание, отсортировав их по времени прихода (по убыванию)
+select v.id, test.visitors.fio, v.time_of_visit, v.trainer, test.trainers."name"
+from test.visit v
+inner join test.visitors on v.visitor = test.visitors.id
+inner join test.trainers on v.trainer = test.trainers.id_trainer
+inner join test.sports on test.trainers.sport_id = test.sports.id
+where test.sports.name = 'Swim'
